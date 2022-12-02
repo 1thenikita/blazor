@@ -1,0 +1,22 @@
+version: '3'
+services:
+  webapi:
+    build:
+      context: ./
+      dockerfile: BlazorApp1/Dockerfile
+    restart: 'on-failure'
+    networks:
+      - proxy
+
+    # Traefik labels
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.blazorapp1-secure.entrypoints=websecure"
+      - "traefik.http.routers.blazorapp1-secure.rule=Host(`blazor.api.kaboom.pro`)"
+      - "traefik.http.routers.blazorapp1-secure.service=blazorapp1"
+      - "traefik.http.services.blazorapp1.loadbalancer.server.port=80"
+
+networks:
+  proxy:
+    external: true
